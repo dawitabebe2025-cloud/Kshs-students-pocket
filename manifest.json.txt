@@ -1,0 +1,10 @@
+{
+  "name": "KSHS Pocket",
+  "sho''rt_name": "Pocket",
+  "description": "Personal money manager for students",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f5fa",
+  "theme_color": "#142b4a"
+}

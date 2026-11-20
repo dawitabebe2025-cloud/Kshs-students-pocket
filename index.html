@@ -1,0 +1,728 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#142b4a">
+<link rel="manifest" href="manifest.json">
+<title>KSHS Pocket</title>
+
+<style>
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  padding:20px;
+  background:#f2f5fa;
+  color:#1c293b;
+  font-family:Arial,sans-serif;
+}
+
+.app {
+  max-width:520px;
+  margin:auto;
+}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+header h1 {
+  margin:0;
+  font-size:25px;
+}
+
+header p {
+  margin:5px 0 0;
+  color:#8290a3;
+  font-size:13px;
+}
+
+.tag {
+  background:#e3ecff;
+  color:#2459a5;
+  padding:8px 11px;
+  border-radius:20px;
+  font-size:12px;
+}
+
+.balance-card {
+  background:linear-gradient(135deg,#142b4a,#24548a);
+  color:white;
+  border-radius:20px;
+  padding:23px;
+  margin-bottom:15px;
+  box-shadow:0 8px 22px #142b4a22;
+}
+
+.balance-card p {
+  margin:0;
+  color:#c8d8ec;
+  font-size:14px;
+}
+
+.balance-card h2 {
+  font-size:34px;
+  margin:12px 0 18px;
+}
+
+.balance-bottom {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.balance-bottom small {
+  color:#c8d8ec;
+  display:block;
+  margin-bottom:5px;
+}
+
+.balance-bottom strong {
+  font-size:15px;
+}
+
+.cards {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:17px;
+}
+
+.card {
+  background:white;
+  padding:17px;
+  border-radius:15px;
+}
+
+.card p {
+  color:#8290a3;
+  font-size:13px;
+  margin:0 0 9px;
+}
+
+.card h3 {
+  margin:0;
+  font-size:19px;
+}
+
+.green { color:#15965b; }
+.red { color:#d34c53; }
+
+.panel {
+  background:white;
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:16px;
+}
+
+h3.section {
+  margin:0 0 15px;
+  font-size:17px;
+}
+
+.actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+button {
+  border:0;
+  padding:13px;
+  border-radius:10px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.receive {
+  background:#e3f7ed;
+  color:#14824d;
+}
+
+.spend {
+  background:#ffebeb;
+  color:#c44249;
+}
+
+input {
+  width:100%;
+  padding:13px;
+  border:1px solid #dce3ed;
+  border-radius:9px;
+  margin:7px 0 12px;
+  font-size:15px;
+  background:white;
+  color:#1c293b;
+}
+
+.primary {
+  background:#2459c5;
+  color:white;
+  width:100%;
+}
+
+.secondary {
+  background:#edf2f8;
+  color:#34445c;
+  width:100%;
+}
+
+.hidden { display:none !important; }
+
+.transaction {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:14px 0;
+  border-bottom:1px solid #edf0f4;
+}
+
+.transaction:last-child {
+  border-bottom:0;
+}
+
+.tx-title {
+  font-weight:bold;
+  font-size:14px;
+  overflow-wrap:anywhere;
+}
+
+.tx-date {
+  color:#8995a6;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.tx-right {
+  text-align:right;
+  flex-shrink:0;
+}
+
+.tx-amount {
+  font-weight:bold;
+  font-size:14px;
+}
+
+.tx-actions {
+  display:flex;
+  gap:5px;
+  margin-top:7px;
+}
+
+.small-btn {
+  padding:6px 8px;
+  font-size:11px;
+  background:#edf2f8;
+  color:#34445c;
+}
+
+.search {
+  margin-bottom:10px;
+}
+
+.empty {
+  text-align:center;
+  color:#8995a6;
+  padding:20px 5px;
+  font-size:14px;
+}
+
+.summary-line {
+  display:flex;
+  justify-content:space-between;
+  margin:12px 0;
+  font-size:14px;
+}
+
+.note {
+  color:#8490a0;
+  font-size:12px;
+  line-height:1.5;
+}
+
+#setup {
+  background:white;
+  border-radius:17px;
+  padding:22px;
+  margin-top:25px;
+}
+
+footer {
+  text-align:center;
+  color:#9aa4b1;
+  font-size:12px;
+  padding:15px 0;
+}
+
+@media(max-width:360px) {
+  body { padding:12px; }
+  .balance-card h2 { font-size:29px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div>
+    <h1>KSHS Pocket</h1>
+    <p>Your money. Your control.</p>
+  </div>
+  <span class="tag">Student Edition</span>
+</header>
+
+<div id="setup" class="hidden">
+  <h2>Welcome!</h2>
+  <p>Let's set up your pocket balance.</p>
+  <label>How much money do you currently have?</label>
+  <input id="opening" type="number" min="0"
+    step="0.01" placeholder="Enter amount in ETB">
+  <button class="primary" onclick="startApp()">
+    Start using KSHS Pocket
+  </button>
+  <p class="note">
+    This is your starting balance, not new income.
+  </p>
+</div>
+
+<div id="main" class="hidden">
+
+  <section class="balance-card">
+    <p>Available Balance</p>
+    <h2 id="balance">0 ETB</h2>
+
+    <div class="balance-bottom">
+      <div>
+        <small>Money received</small>
+        <strong id="income">0 ETB</strong>
+      </div>
+      <div>
+        <small>Money spent</small>
+        <strong id="expenses">0 ETB</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="cards">
+    <div class="card">
+      <p>This month's received money</p>
+      <h3 class="green" id="monthIncome">0 ETB</h3>
+    </div>
+    <div class="card">
+      <p>This month's spending</p>
+      <h3 class="red" id="monthExpenses">0 ETB</h3>
+    </div>
+  </div>
+
+  <section class="panel">
+    <h3 class="section">Manage your money</h3>
+    <div class="actions">
+      <button class="receive" onclick="showForm('income')">
+        + Add Money
+      </button>
+      <button class="spend" onclick="showForm('expense')">
+        − Spend Money
+      </button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="transactionForm">
+    <h3 class="section" id="formTitle">New transaction</h3>
+
+    <label>Amount (ETB)</label>
+    <input id="amount" type="number"
+      min="0.01" step="0.01" placeholder="Enter amount">
+
+    <label>Description</label>
+    <input id="description" type="text"
+      maxlength="100" placeholder="Why did you receive or spend it?">
+
+    <label>Date</label>
+    <input id="date" type="date">
+
+    <button class="primary" onclick="saveTransaction()">
+      Save transaction
+    </button>
+    <button class="secondary" onclick="closeForm()">
+      Cancel
+    </button>
+  </section>
+
+  <section class="panel">
+    <h3 class="section">Transaction history</h3>
+
+    <input class="search" id="search"
+      type="search" placeholder="Search descriptions..."
+      oninput="render()">
+
+    <div id="history"></div>
+  </section>
+
+  <section class="panel">
+    <h3 class="section">Your money summary</h3>
+
+    <div class="summary-line">
+      <span>Starting balance</span>
+      <strong id="starting">0 ETB</strong>
+    </div>
+
+    <div class="summary-line">
+      <span>Total received</span>
+      <strong class="green" id="totalIncome">0 ETB</strong>
+    </div>
+
+    <div class="summary-line">
+      <span>Total spent</span>
+      <strong class="red" id="totalExpenses">0 ETB</strong>
+    </div>
+
+    <div class="summary-line">
+      <span>Number of transactions</span>
+      <strong id="count">0</strong>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h3 class="section">Backup your records</h3>
+    <p class="note">
+      Save a backup file so you can restore your records
+      if you change phones or clear browser data.
+    </p>
+
+    <button class="primary" onclick="backup()">
+      Download backup
+    </button>
+
+    <input type="file" id="restoreFile"
+      accept=".json,application/json">
+
+    <button class="secondary" onclick="restore()">
+      Restore backup
+    </button>
+  </section>
+
+  <footer>
+    KSHS Pocket • Made for students
+  </footer>
+
+</div>
+</div>
+
+<script>
+const KEY = "kshsPocketData";
+
+let data = JSON.parse(localStorage.getItem(KEY) || "null");
+let currentType = "expense";
+let editingId = null;
+
+const $ = id => document.getElementById(id);
+
+function money(value) {
+  return Number(value).toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }) + " ETB";
+}
+
+function today() {
+  return new Date().toLocaleDateString("en-CA");
+}
+
+function saveData() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+}
+
+function startApp() {
+  const opening = Number($("opening").value);
+
+  if (!Number.isFinite(opening) || opening < 0) {
+    alert("Enter a valid starting balance.");
+    return;
+  }
+
+  data = {
+    opening,
+    transactions: []
+  };
+
+  saveData();
+  initialize();
+}
+
+function initialize() {
+  if (!data || !Array.isArray(data.transactions) ||
+      !Number.isFinite(data.opening)) {
+    $("setup").classList.remove("hidden");
+    $("main").classList.add("hidden");
+    return;
+  }
+
+  $("setup").classList.add("hidden");
+  $("main").classList.remove("hidden");
+  $("date").value = today();
+  render();
+}
+
+function showForm(type) {
+  currentType = type;
+  editingId = null;
+
+  $("formTitle").textContent =
+    type === "income" ? "Add money received" : "Record spending";
+
+  $("amount").value = "";
+  $("description").value = "";
+  $("date").value = today();
+
+  $("transactionForm").classList.remove("hidden");
+  $("transactionForm").scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+}
+
+function closeForm() {
+  $("transactionForm").classList.add("hidden");
+  editingId = null;
+}
+
+function saveTransaction() {
+  const amount = Number($("amount").value);
+  const description = $("description").value.trim();
+  const date = $("date").value;
+
+  if (!Number.isFinite(amount) || amount <= 0 || !date) {
+    alert("Enter a valid amount and date.");
+    return;
+  }
+
+  if (!description) {
+    alert("Please describe this transaction.");
+    return;
+  }
+
+  const previous = editingId
+    ? data.transactions.find(t => t.id === editingId)
+    : null;
+
+  const transaction = {
+    id: editingId || (
+      Date.now().toString() + Math.random().toString(16).slice(2)
+    ),
+    type: currentType,
+    amount,
+    description,
+    date
+  };
+
+  if (previous) {
+    data.transactions = data.transactions.map(t =>
+      t.id === editingId ? transaction : t
+    );
+  } else {
+    data.transactions.unshift(transaction);
+  }
+
+  saveData();
+  closeForm();
+  render();
+}
+
+function editTransaction(id) {
+  const t = data.transactions.find(item => item.id === id);
+  if (!t) return;
+
+  editingId = id;
+  currentType = t.type;
+
+  $("formTitle").textContent = "Edit transaction";
+  $("amount").value = t.amount;
+  $("description").value = t.description;
+  $("date").value = t.date;
+
+  $("transactionForm").classList.remove("hidden");
+  $("transactionForm").scrollIntoView({
+    behavior:"smooth",
+    block:"center"
+  });
+}
+
+function deleteTransaction(id) {
+  if (!confirm("Delete this transaction?")) return;
+
+  data.transactions = data.transactions.filter(t => t.id !== id);
+  saveData();
+  render();
+}
+
+function render() {
+  if (!data) return;
+
+  let income = 0;
+  let expenses = 0;
+  let monthIncome = 0;
+  let monthExpenses = 0;
+
+  const month = today().slice(0, 7);
+
+  data.transactions.forEach(t => {
+    if (t.type === "income") {
+      income += t.amount;
+      if (t.date.startsWith(month)) monthIncome += t.amount;
+    } else {
+      expenses += t.amount;
+      if (t.date.startsWith(month)) monthExpenses += t.amount;
+    }
+  });
+
+  const balance = data.opening + income - expenses;
+
+  $("balance").textContent = money(balance);
+  $("income").textContent = money(income);
+  $("expenses").textContent = money(expenses);
+  $("monthIncome").textContent = money(monthIncome);
+  $("monthExpenses").textContent = money(monthExpenses);
+
+  $("starting").textContent = money(data.opening);
+  $("totalIncome").textContent = money(income);
+  $("totalExpenses").textContent = money(expenses);
+  $("count").textContent = data.transactions.length;
+
+  const query = $("search").value.trim().toLowerCase();
+  const history = $("history");
+  history.replaceChildren();
+
+  const filtered = data.transactions.filter(t =>
+    t.description.toLowerCase().includes(query)
+  );
+
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "No transactions found.";
+    history.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "transaction";
+
+    const details = document.createElement("div");
+    const title = document.createElement("div");
+    const date = document.createElement("div");
+
+    title.className = "tx-title";
+    title.textContent = t.description;
+
+    date.className = "tx-date";
+    date.textContent = t.date +
+      (t.type === "income" ? " • Money received" : " • Money spent");
+
+    details.append(title, date);
+
+    const right = document.createElement("div");
+    right.className = "tx-right";
+
+    const amount = document.createElement("div");
+    amount.className = "tx-amount " +
+      (t.type === "income" ? "green" : "red");
+
+    amount.textContent =
+      (t.type === "income" ? "+ " : "− ") + money(t.amount);
+
+    const buttons = document.createElement("div");
+    buttons.className = "tx-actions";
+
+    const edit = document.createElement("button");
+    edit.className = "small-btn";
+    edit.textContent = "Edit";
+    edit.onclick = () => editTransaction(t.id);
+
+    const remove = document.createElement("button");
+    remove.className = "small-btn";
+    remove.textContent = "Delete";
+    remove.onclick = () => deleteTransaction(t.id);
+
+    buttons.append(edit, remove);
+    right.append(amount, buttons);
+    row.append(details, right);
+    history.appendChild(row);
+  });
+}
+
+function backup() {
+  const file = new Blob(
+    [JSON.stringify(data, null, 2)],
+    {type:"application/json"}
+  );
+
+  const url = URL.createObjectURL(file);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "KSHS-Pocket-Backup.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function restore() {
+  const file = $("restoreFile").files[0];
+  if (!file) {
+    alert("Choose a backup file first.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try {
+      const restored = JSON.parse(reader.result);
+
+      if (
+        !Number.isFinite(restored.opening) ||
+        !Array.isArray(restored.transactions) ||
+        !restored.transactions.every(t =>
+          typeof t.id === "string" &&
+          ["income", "expense"].includes(t.type) &&
+          Number.isFinite(t.amount) &&
+          t.amount > 0 &&
+          typeof t.description === "string" &&
+          typeof t.date === "string"
+        )
+      ) throw new Error("Invalid backup");
+
+      if (!confirm("Replace your current records with this backup?")) return;
+
+      data = restored;
+      saveData();
+      initialize();
+      alert("Backup restored successfully.");
+    } catch {
+      alert("This backup file is invalid.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {''
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+
+initialize();
+</script>
+</body>
+</html>
+
